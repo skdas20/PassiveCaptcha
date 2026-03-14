@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 backend/train/artifacts/*.joblib
 backend/train/artifacts/*.json
+backend/train/raw/web_bot_detection_dataset/

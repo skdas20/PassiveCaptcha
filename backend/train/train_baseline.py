@@ -32,9 +32,9 @@ def main() -> None:
     model = RandomForestClassifier(
         n_estimators=200, max_depth=8, min_samples_leaf=2, random_state=42
     )
-    model.fit(x_train, y_train)
+    model.fit(x_train.to_numpy(), y_train)
 
-    predictions = model.predict(x_test)
+    predictions = model.predict(x_test.to_numpy())
     report = classification_report(y_test, predictions, output_dict=True)
 
     ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)

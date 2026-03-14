@@ -16,7 +16,7 @@ collect session data first, engineer features second, train models third, then s
 2. Send raw session payloads to the FastAPI ingest endpoint.
 3. Export engineered feature rows with labels into `backend/train/data/sessions.csv`.
 4. Train the baseline model and save artifacts in `backend/train/artifacts`.
-5. Replace the placeholder heuristic scorer with artifact-backed model inference.
+5. The API automatically switches to artifact-backed model inference when saved artifacts exist.
 
 ## Commands
 
@@ -39,6 +39,9 @@ uvicorn app.main:app --reload
 
 ```bash
 cd backend
+python -m train.import_bordar
 pip install -r requirements-ml.txt
 python -m train.train_baseline
+python -m train.train_xgboost
+python -m train.train_lstm
 ```
