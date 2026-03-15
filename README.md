@@ -1,111 +1,102 @@
-# PassiveCaptcha: ML-Based Passive Human Verification System
+<div align="center">
+  <h1>🛡️ PassiveCaptcha</h1>
+  <p><b>Frictionless, Machine-Learning Powered Human Verification</b></p>
+  <p><i>Building a frictionless web without crosswalks, fire hydrants, and blurry text.</i></p>
+  
+  ![Hackathon Ready](https://img.shields.io/badge/Hackathon-Ready-success?style=for-the-badge&logo=hackaday)
+  ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+  ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+  ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
+</div>
 
-PassiveCaptcha is an intelligent, machine learning-driven system designed to act as a seamless alternative to traditional CAPTCHAs. It captures passive behavioral and environmental parameters�such as mouse dynamics, typing rhythms, scroll patterns, and hardware entropy�to differentiate between human users and automated bots in real time, eliminating user friction while securing enterprise applications.
+<hr/>
 
-## Key Features
-- **Passive Environmental Analysis**: Detects hardware characteristics, WebGL renderer availability, pixel ratios, and viewport anomalies commonly seen in headless automated sessions.
-- **Behavioral Intelligence ML**: Ingests high-frequency signals (mouse trajectories, click intervals, scroll rates) to a Python FastApi backend.
-- **Real-Time Classification**: Utilizes an ensemble ML backend (XGBoost, Random Forests, LSTM) to output a confidence interval: `human`, `bot`, or `review`.
-- **Low-Friction Fallback (Phase 3)**: If the backend expresses low confidence (`review`), the SDK triggers a lightweight, minimal interactive challenge (e.g., clicking a moving dot) rather than a complex image-labeling puzzle.
-- **Enterprise Analytics Dashboard (Phase 4)**: A React-based diagnostic UI displaying live streaming diagnostics, feature importance (SHAP values), flagged signal timelines, and historical confidence scores.
-- **API Hardening & SDK (Phase 5)**: Enterprise-grade security out-of-the-box:
-  - **Rate Limiting**: Protects against rapid verification abuse.
-  - **JWT Session Tokens**: Secures telemetry streams tying ingest calls strictly to an initiated, monitored session.
-  - **Session Persistence**: Extensible caching strategy (Redis-ready mock included) resolving temporal bot profiles over time.
-  - **`PassiveCaptcha.init()` SDK**: Clean, pluggable JS snippet allowing instantaneous client integration.
+## 🚨 The Problem
+Enterprise digital platforms rely on CAPTCHA to deflect bot traffic and DoS attacks. However, traditional CAPTCHAs create massive friction—frustrating users, ruining onboarding conversion rates, and interrupting seamless digital engagement. Furthermore, modern vision AI and click-farms bypass traditional CAPTCHAs with ease.
 
-## Folder Structure
-```text
-PassiveCaptcha/
-+-- apps/
-�   +-- web/                 # React UI, Live Analytics Dashboard, & Fallback Challenge
-�       +-- sdk.js           # Client-side enterprise wrapper
-�       +-- src/
-�       �   +-- App.tsx      # Main application dashboard
-�       �   +-- Challenge.tsx# Minimal fallback UI component
-�       �   +-- Dashboard.tsx# Live Analytics monitoring UI
-�       �   +-- lib/         # Signal collection logic & ML inferences logic
-�       +-- package.json
-�       +-- vite.config.ts
-+-- backend/                 # FastAPI & ML Inference Engine
-�   +-- app/
-�   �   +-- main.py          # FastApi server (JWT Auth, Rate limiting configured)
-�   �   +-- services/        # ML Extractors & Model Serving 
-�   �   +-- schemas.py
-�   +-- train/               # Jupyter/Python scripts for ML training (LSTM + XGBoost)
-�   +-- requirements-api.txt # API layer Dependencies
-�   +-- requirements-ml.txt  # Training & Inference Dependencies
-+-- docker-compose.yml       # Production-ready orchestration
-+-- package.json             # Monorepo command runner
+## ✨ Our Solution
+**PassiveCaptcha** is a completely invisible, ML-based verification system. It passively collects DOM telemetry and behavioral biometrics in the background.
+
+* **High Confidence Human?** Verified instantly. Zero friction.
+* **Suspicious/Inconclusive?** Triggers a hyper-lightweight, 1-click "moving dot" fallback challenge.
+
+---
+
+## 🧠 Core Features & Architecture
+
+### 1. Privacy-First Signal Collection
+We track math and geometry, **never** PII (Personally Identifiable Information).
+* **Behavioral:** Mouse movement linearity, scroll jerk, keystroke rhythms.
+* **Environmental:** Browser entropy, device pixel ratios, viewport anomalies, and WebGL rendering signatures.
+
+### 2. Multi-Model ML Ensemble
+* **XGBoost & Random Forest:** Analyzes structured browser & environmental features.
+* **LSTM Neural Network:** Deep learning model that evaluates sequential mouse trajectories and timing cadence in real time.
+
+### 3. Open Innovation: Explainable AI (XAI)
+We didn't just build a black box. PassiveCaptcha utilizes **SHAP (SHapley Additive exPlanations)** values to provide a real-time Analytics Dashboard. Enterprise security admins can see *exactly* which behavioral features pushed a session towards a "Bot" or "Human" verdict.
+
+### 4. Enterprise-Grade Security
+Pluggable and production-ready. The system uses **Stateless JWT Session Tokens** and implements strict Redis-backed **Sliding-Window Rate Limiting** to prevent abuse at the edge.
+
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+graph TD;
+    Client[Client UI / React] -->|Passive DOM Telemetry| SDK[SignalCollector SDK];
+    SDK -->|1-sec interval sync| API[FastAPI Backend /v1/ingest];
+    API -->|Validates JWT & Rate Limits| Server[Ingestion Service];
+    Server -->|Extracts Features| ML[ML Ensemble];
+    ML -->|RandomForest + XGBoost| Score[Confidence Score];
+    ML -->|PyTorch LSTM| Score;
+    Score -->|SHAP Analysis| Result{Threshold Logic};
+    Result -->|Score > 0.75| H[Human - Access Granted];
+    Result -->|Score < 0.40| B[Bot - Blocked];
+    Result -->|0.40 - 0.75| R[Review - Fallback UI Triggered];
+    R --> Challenge[Click The Dot UI];
 ```
 
-## System Architecture
+---
 
-1. **Client-Side (SDK & Signal Collector)**
-   The client runs a silent, passive collector. Information is batched into JSON snapshots detailing pointer geometry, keystroke cadence, and deep hardware checks. 
+## 💻 Tech Stack
 
-2. **API & Data Ingest Layer (FastAPI)**
-   The backend provides `POST /v1/init` and `POST /v1/ingest`. `init` bootstraps a JWT session and prepares a temporal Redis window. As telemetry flows to `ingest`, it enforces rate limits, validates tokens, and forwards to the inference pipeline.
+**Frontend:**
+* React 18 / TypeScript
+* Vite / Tailwind CSS
+* Headless telemetry SDK
 
-3. **Inference pipeline**
-   We extract standard deviations, acceleration max rates, and path variance. The feature vector passes through an ensemble:
-   - *Gradient Boosted Decision Trees (XG)*: For broad structural classification.
-   - *LSTM*: For sequence modeling (examining mouse X-Y coordinates over time).
+**Backend:**
+* Python 3.13 / FastAPI / Uvicorn
+* PyJWT (Secure Sessions)
+* PyTorch / Scikit-learn / XGBoost (Inference Engine)
 
-4. **Response & Orchestration**
-   The response contains `verdict` & `score`. If the client detects `verdict === "review"`, the `ChallengeOverlay` triggers. Otherwise, the interaction propagates uninterrupted.
+---
 
-## How to Run locally
+## 🚀 Getting Started (Run Locally)
 
-### Prerequisites
-- Node.js (v16+)
-- Python (3.9+)
-
-### Installation
-
-1. **Install Frontend Dependencies:**
-   ```bash
-   cd apps/web
-   npm install
-   ```
-
-2. **Install Backend Dependencies:**
-   ```bash
-   # Use a virtual environment
-   cd backend
-   pip install -r requirements-api.txt
-   ```
-
-### Start Development Servers
-
-1. **Start the API Backend:**
-   ```bash
-   cd backend
-   python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-   ```
-
-2. **Start the Frontend Dashboard:**
-   ```bash
-   cd apps/web
-   npm run dev
-   ```
-   Navigate to `http://localhost:5173` to see the live Analytics dashboard in action, observing your own session. Emulate simple automated-like behavior (e.g., refreshing repeatedly or moving mouse uniformly) to trigger the `review` fallback challenge.
-
-## Production Deployment (Docker)
-The repository contains a `docker-compose.yml` for unified scaling deployment.
-
+### 1. Start the Backend API
+Navigate to the backend folder, install ML dependencies, and boot the FastAPI server.
 ```bash
-docker-compose up --build -d
+cd backend
+pip install -r requirements-api.txt
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-## Privacy & Compliance
-PassiveCaptcha operates strictly without tracking persistent cookies or capturing deeply sensitive input field keystrokes. Interactions are heavily anonymized into numeric deltas and geometric deviations before leaving the browser, ensuring full GDPR and CCPA compliance.
+### 2. Start the Frontend Application
+In a new terminal window, navigate to the web app, install Node modules, and boot Vite.
+```bash
+cd apps/web
+npm install
+npm run dev
+```
 
-## Open Innovation & Future Extensibility
-To extend beyond standard CAPTCHA replacement paradigms, this solution incorporates the following innovative concepts:
-1. **Explainable AI (XAI)**: We compute SHAP (SHapley Additive exPlanations) values on the fly to provide a transparent "Feature Breakdown" panel. Enterprises know *why* a session was flagged (e.g., "Abnormal Scroll Velocity").
-2. **Federated Threat Intelligence Scope**: Built on a modular architecture, the backend allows for easy integration with global IP threat feeds or enterprise SIEM platforms.
-3. **Continuous Reinforcement Loop**: Real-world challenge results (User solved dot-click vs Abandoned) can be automatically ingested back into the data pipelines to re-train the XGBoost models iteratively.
+### 3. Test the App
+Navigate to `http://localhost:5173`. Move your mouse and scroll around naturally to see the ML dashboard classify you as human, or trigger the fallback UI by acting suspiciously!
 
-## Authors
-Created by the ML Security Automation Team as an alternative defense schema for digital enterprise onboarding and validation.
+---
+
+<div align="center">
+  <i>Built by Sumit Kumar Das and Piyush Yadav </i>
+</div>
