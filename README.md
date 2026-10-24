@@ -57,11 +57,11 @@ graph TD;
     V -->|bot| NO[Block];
 ```
 
-**Signals collected (no personal data):**
+**Signals collected (behavioural and device signals, no account data):**
 
 - **Pointer:** speed, acceleration, jerk, path linearity, clicks
 - **Scroll:** velocity, variance, direction changes
-- **Keyboard:** event counts and inter-key timing, *never* key values
+- **Keyboard:** event counts, inter-key timing and hold duration. Only timing is used for scoring; see Security notes about key values.
 - **Environment:** device pixel ratio, viewport anomalies, touch points, WebGL renderer, canvas hash
 - **Timing:** time to first interaction, tab-visibility changes
 
@@ -156,6 +156,7 @@ docker-compose.yml   API + web app
 
 This is a prototype. Before any real deployment:
 
+- Stop sending key values: the collector currently includes `event.key` in keyboard samples. The backend only uses timing, so the value can simply be dropped.
 - Set your own JWT signing key: the current one is hard-coded in `backend/app/main.py`.
 - Change the default dashboard credentials, and replace unsalted SHA-256 password hashing with Argon2 or bcrypt.
 - Restrict CORS (currently `*`).
