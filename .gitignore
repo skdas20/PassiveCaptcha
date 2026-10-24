@@ -9,3 +9,8 @@ backend/train/raw/web_bot_detection_dataset/
 .deploy_keys/
 backend/app/data/
 apps/web/*.tsbuildinfo
+
+# TypeScript build info
+*.tsbuildinfo
+# Unpacked training data
+backend/train/raw/web_bot_detection_dataset/

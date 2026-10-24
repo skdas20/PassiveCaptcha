@@ -1,0 +1,23 @@
+name: Detection bypass
+description: A bot or automation tool was classified as human
+labels: ["model", "security"]
+body:
+  - type: input
+    id: tool
+    attributes:
+      label: Tool used
+      placeholder: "Playwright 1.55 with a custom mouse-movement script"
+    validations:
+      required: true
+  - type: textarea
+    id: approach
+    attributes:
+      label: Approach
+      description: How the automation behaved (movement pattern, timing, etc.).
+    validations:
+      required: true
+  - type: textarea
+    id: scores
+    attributes:
+      label: Scores returned
+      description: Paste the verdict, model scores and SHAP values from the dashboard or API response.
