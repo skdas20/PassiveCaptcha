@@ -13,7 +13,7 @@ PassiveCaptcha watches *how* someone uses a page (mouse dynamics, scrolling, typ
 [![React](https://img.shields.io/badge/React_19-20232A?logo=react&logoColor=61DAFB)](https://react.dev)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[How it works](#how-it-works) · [Quick start](#quick-start) · [Models](#models) · [API](#api) · [Roadmap](#roadmap) · [Contributing](#contributing)
+[How it works](#how-it-works) · [Quick start](#quick-start) · [Models](#models) · [Dataset](#dataset) · [API](#api) · [Roadmap](#roadmap) · [Contributing](#contributing)
 
 </div>
 
@@ -127,7 +127,19 @@ python -m train.import_bordar      # rebuilds train/data/sessions.csv
 python -m train.train_lstm
 ```
 
-Artifacts are written to `backend/train/artifacts/` and picked up automatically on the next API start. Training data comes from a public web-bot mouse-movement dataset (`backend/train/raw/`); it has no scroll, keyboard or browser signals, so those features are zero-filled during training.
+Artifacts are written to `backend/train/artifacts/` and picked up automatically on the next API start. The training data, its citation, and the licence it is redistributed under are described in [Dataset](#dataset).
+
+## Dataset
+
+Every model is trained on the [Web Bot Detection Dataset](https://m4d.iti.gr/web-bot-detection-dataset/) (Iliou, Kostoulas, Tsikrika, Katos, Vrochidis, and Kompatsiaris, 2020). It contains phase 1 and phase 2 web logs and mouse movements, labelled as human, moderate bot, or advanced bot. [`backend/train/raw/web_bot_detection_dataset.zip`](backend/train/raw/web_bot_detection_dataset.zip) is the authors' archive, unmodified. [`backend/train/data/sessions.csv`](backend/train/data/sessions.csv) is a feature table derived from those mouse movements (`python -m train.import_bordar` rebuilds it). Those recordings have no scroll, keyboard, or browser signals, so those features are zero-filled during training.
+
+**Citation.** If you use this dataset, or models trained on it, please cite:
+
+> Christos Iliou, Theodoros Kostoulas, Theodora Tsikrika, Vasilis Katos, Stefanos Vrochidis, and Ioannis Kompatsiaris. 2021. Detection of Advanced Web Bots by Combining Web Logs with Mouse Behavioural Biometrics. *Digital Threats: Research and Practice* 2, 3, Article 24 (September 2021), 26 pages. <https://doi.org/10.1145/3447815>
+
+Deposit record: Iliou et al., [Web Bot Detection Dataset](https://bordar.bournemouth.ac.uk/272/), BORDaR, Bournemouth University (2020). Copyright is held by the Information Technologies Institute (CERTH) and Bournemouth University.
+
+**Licence.** The dataset is [Creative Commons Attribution-NonCommercial-ShareAlike 2.0](https://creativecommons.org/licenses/by-nc-sa/2.0/) (CC BY-NC-SA 2.0). That licence allows this repository to keep and redistribute the unmodified archive for non-commercial use, provided you give the attribution above, link to the licence, and share adaptations (including `sessions.csv`) under the same licence. Commercial use is not allowed. PassiveCaptcha source code is [MIT](LICENSE); the dataset and tables derived from it remain CC BY-NC-SA 2.0.
 
 ## API
 
@@ -186,4 +198,4 @@ Built by [Sumit Kumar Das](https://github.com/skdas20) and [Piyush Yadav](https:
 
 ## License
 
-[MIT](LICENSE)
+PassiveCaptcha source code is [MIT](LICENSE). The Web Bot Detection Dataset and `backend/train/data/sessions.csv` are [CC BY-NC-SA 2.0](https://creativecommons.org/licenses/by-nc-sa/2.0/). See [Dataset](#dataset).
